@@ -1,58 +1,36 @@
 replicaCount: 1
 
-backend:
-  image:
-    repository: ghcr.io/forsakringskassan/template-quarkus-app
-    tag: snapshot
-    pullPolicy: Always
-  service:
-    type: ClusterIP
-    port: 8080
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 250m
-      memory: 256Mi
+quarkus:
+  - name: quarkus
+    image:
+      repository: ghcr.io/forsakringskassan/template-quarkus-app
+      tag: snapshot
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 8080
 
-frontend:
-  image:
-    repository: ghcr.io/forsakringskassan/designsystem-user-app
-    tag: snapshot
-    pullPolicy: Always
-  service:
-    type: ClusterIP
-    port: 80
-  resources:
-    limits:
-      cpu: 200m
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+apache:
+  - name: apache
+    image:
+      repository: ghcr.io/forsakringskassan/designsystem-user-app
+      tag: snapshot
+      pullPolicy: Always
+    service:
+      type: ClusterIP
+      port: 80
 
 ingress:
   enabled: true
   className: "nginx"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
   hosts:
-    - host: fk-app.local
-      paths:
+    - paths:
         - path: /api
           pathType: Prefix
-          backend: backend
+          backend: quarkus
         - path: /
           pathType: Prefix
-          backend: frontend
+          backend: apache
 
-serviceAccount:
-  create: true
-  name: ""
-podSecurityContext: {}
-securityContext: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
