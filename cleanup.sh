@@ -9,11 +9,7 @@ echo "🧹 Cleaning up FK Kubernetes Stack..."
 
 # Remove the Helm release
 echo "📦 Removing Helm release..."
-helm uninstall fk-app --namespace fk-apps || echo "Release not found, continuing..."
-
-# Delete namespace
-echo "🗑️  Deleting namespace..."
-kubectl delete namespace fk-apps --ignore-not-found=true
+helm uninstall template-k8s || echo "Release not found, continuing..."
 
 # Remove from /etc/hosts
 echo "📝 Removing entry from /etc/hosts..."
