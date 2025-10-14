@@ -34,10 +34,14 @@ minikube addons enable ingress
 
 # Wait for ingress controller to be ready
 echo "⏳ Waiting for ingress controller to be ready..."
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=120s
+for i in {1..60}; do
+  if kubectl get pods -n ingress-nginx -l app.kubernetes.io/component=controller --field-selector=status.phase=Running | grep -q Running; then
+    echo "✅ Ingress controller is ready"
+    break
+  fi
+  echo "   Attempt $i/60: Waiting for ingress controller..."
+  sleep 2
+done
 
 # Wait a bit more for the admission webhook to be ready
 echo "⏳ Waiting for ingress admission webhook to be ready..."
