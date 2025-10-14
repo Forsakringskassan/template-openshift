@@ -25,10 +25,10 @@ spec:
       containers:
         - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
+          imagePullPolicy: Always
           ports:
             - name: http
-              containerPort: {{ .service.port }}
+              containerPort: 80
               protocol: TCP
 ---
 apiVersion: v1
@@ -40,9 +40,9 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/component: {{ .name }}
 spec:
-  type: {{ .service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .service.port }}
+    - port: 80
       targetPort: http
       protocol: TCP
       name: http

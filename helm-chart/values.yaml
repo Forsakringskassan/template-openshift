@@ -5,20 +5,12 @@ quarkus:
     image:
       repository: ghcr.io/forsakringskassan/template-quarkus-app
       tag: snapshot
-      pullPolicy: Always
-    service:
-      type: ClusterIP
-      port: 8080
 
 apache:
   - name: apache
     image:
       repository: ghcr.io/forsakringskassan/designsystem-user-app
       tag: snapshot
-      pullPolicy: Always
-    service:
-      type: ClusterIP
-      port: 80
 
 ingress:
   enabled: true
