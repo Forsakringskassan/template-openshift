@@ -91,7 +91,7 @@ echo "📁 Creating/switching to project..."
 oc new-project template-ocp 2>/dev/null || oc project template-ocp
 
 echo "📦 Deploying FK application stack..."
-helm upgrade --install template-ocp ./helm-chart --wait
+helm upgrade --install template-ocp ./helm-chart --wait --timeout=10m
 
 echo "� Getting route information..."
 ROUTE_HOST=$(oc get route template-ocp-route -o jsonpath='{.spec.host}' 2>/dev/null || echo "Route not found")
