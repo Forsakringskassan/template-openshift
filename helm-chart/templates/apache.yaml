@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/component: {{ .name }}
 spec:
-  replicas: 1
+  replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: template-chart
@@ -22,66 +22,14 @@ spec:
         app.kubernetes.io/instance: {{ $.Release.Name }}
         app.kubernetes.io/component: {{ .name }}
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 1001
-        fsGroup: 1001
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
           imagePullPolicy: Always
-          command: ["/bin/sh"]
-          args:
-            - -c
-            - |
-              # Create necessary directories
-              mkdir -p /tmp /var/log/apache2
-              
-              # Set proper ownership
-              chown -R 1001:1001 /tmp /var/log/apache2 2>/dev/null || true
-              
-              # Start Apache with custom PID file location
-              exec httpd-foreground -D FOREGROUND
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1001
-            runAsGroup: 1001
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop:
-              - ALL
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
-          volumeMounts:
-            - name: apache-tmp
-              mountPath: /tmp
-            - name: apache-logs
-              mountPath: /var/log/apache2
-          env:
-            - name: APACHE_RUN_USER
-              value: "#1001"
-            - name: APACHE_RUN_GROUP
-              value: "#1001"
-            - name: APACHE_PID_FILE
-              value: "/tmp/apache2.pid"
-            - name: APACHE_RUN_DIR
-              value: "/tmp"
-            - name: APACHE_LOCK_DIR
-              value: "/tmp"
-            - name: APACHE_LOG_DIR
-              value: "/var/log/apache2"
-      volumes:
-        - name: apache-tmp
-          emptyDir: {}
-        - name: apache-logs
-          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

@@ -3,10 +3,6 @@ quarkus:
     image:
       repository: ghcr.io/forsakringskassan/template-quarkus-app
       tag: snapshot
-    config:
-      fullmakts:
-        api:
-          baseUrl: "http://whatever/"
     properties: |
       fullmakts.api.base-url=http://whatever/
 
