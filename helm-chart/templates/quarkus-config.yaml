@@ -1,0 +1,14 @@
+{{- range .Values.quarkus }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}-config
+  labels:
+    app.kubernetes.io/name: template-chart
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: {{ .name }}
+data:
+  application.properties: |
+{{ .properties | indent 4 }}
+{{- end }}

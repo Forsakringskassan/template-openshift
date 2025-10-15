@@ -42,6 +42,17 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /deployments/config
+              readOnly: true
+          env:
+            - name: QUARKUS_CONFIG_LOCATIONS
+              value: "/deployments/config/application.properties"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ $.Release.Name }}-{{ .name }}-config
 ---
 apiVersion: v1
 kind: Service
