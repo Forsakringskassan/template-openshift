@@ -43,14 +43,6 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 The `oc` CLI is included with CRC installation. You can also download it separately from [OpenShift CLI tools](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html).
 
-## Usage
-
-### Start the Environment
-
-```bash
-./deploy.sh
-```
-
 ### View Application Status
 
 Check pod status
@@ -76,12 +68,6 @@ Access the application:
 
 ```sh
 crc console --url
-```
-
-### Clean Up
-
-```bash
-./cleanup.sh
 ```
 
 ### Authentication Issues
