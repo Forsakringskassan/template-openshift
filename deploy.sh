@@ -22,23 +22,6 @@ if ! command -v oc &> /dev/null; then
     exit 1
 fi
 
-echo "🔍 Checking virtualization requirements..."
-if ! command -v virtiofsd &> /dev/null; then
-    echo "⚠️  virtiofsd not found. Installing qemu-virtiofs..."
-    echo "   This requires sudo privileges."
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update && sudo apt-get install -y qemu-system-x86 qemu-utils
-    elif command -v dnf &> /dev/null; then
-        sudo dnf install -y qemu-kvm qemu-img
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y qemu-kvm qemu-img
-    else
-        echo "❌ Unable to install virtiofsd automatically."
-        echo "   Please install qemu-system manually for your distribution."
-        exit 1
-    fi
-fi
-
 echo "🔧 Starting CodeReady Containers..."
 if ! crc start; then
     echo "⚠️  CRC start failed. Trying certificate renewal..."
