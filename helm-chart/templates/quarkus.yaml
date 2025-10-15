@@ -24,7 +24,6 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        fsGroup: 1001
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -34,7 +33,6 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            runAsUser: 1001
             seccompProfile:
               type: RuntimeDefault
             capabilities:
