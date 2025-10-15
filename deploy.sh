@@ -2,10 +2,10 @@
 
 set -e
 
-# Check if minikube is installed
-if ! command -v minikube &> /dev/null; then
-    echo "❌ Minikube is not installed. Please install it first:"
-    echo "   https://minikube.sigs.k8s.io/docs/start/"
+# Check if crc is installed
+if ! command -v crc &> /dev/null; then
+    echo "❌ CodeReady Containers (CRC) is not installed. Please install it first:"
+    echo "   https://developers.redhat.com/products/codeready-containers/overview"
     exit 1
 fi
 
@@ -16,72 +16,47 @@ if ! command -v helm &> /dev/null; then
     exit 1
 fi
 
-# Check if kubectl is installed
-if ! command -v kubectl &> /dev/null; then
-    echo "❌ kubectl is not installed. Please install it first:"
-    echo "   https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/"
-    echo "   Or install via snap: sudo snap install kubectl --classic"
+# Check if oc is installed
+if ! command -v oc &> /dev/null; then
+    echo "❌ OpenShift CLI (oc) is not installed. Please install it first:"
+    echo "   It should be included with CRC installation."
     exit 1
 fi
 
-# Start minikube if not running
-echo "🔧 Starting Minikube..."
-minikube start --driver=docker --cpus=2 --memory=4096
+# Start CRC if not running
+echo "🔧 Starting CodeReady Containers..."
+crc start
 
-# Enable ingress addon
-echo "🌐 Enabling ingress addon..."
-minikube addons enable ingress
+# Login to CRC
+echo "🔐 Setting up OpenShift login..."
+eval $(crc oc-env)
 
-# Wait for ingress controller to be ready
-echo "⏳ Waiting for ingress controller to be ready..."
-for i in {1..60}; do
-  if kubectl get pods -n ingress-nginx -l app.kubernetes.io/component=controller --field-selector=status.phase=Running | grep -q Running; then
-    echo "✅ Ingress controller is ready"
-    break
-  fi
-  echo "   Attempt $i/60: Waiting for ingress controller..."
-  sleep 2
-done
+# Login as developer user
+oc login -u developer -p developer https://api.crc.testing:6443 --insecure-skip-tls-verify=true
 
-# Wait a bit more for the admission webhook to be ready
-echo "⏳ Waiting for ingress admission webhook to be ready..."
-sleep 30
-
-# Verify webhook is responding
-echo "🔍 Verifying admission webhook..."
-for i in {1..10}; do
-  if kubectl get validatingwebhookconfiguration ingress-nginx-admission &>/dev/null; then
-    echo "✅ Admission webhook is ready"
-    break
-  fi
-  echo "   Attempt $i/10: Waiting for admission webhook..."
-  sleep 10
-done
+# Create project if it doesn't exist
+echo "📁 Creating/switching to project..."
+oc new-project template-ocp 2>/dev/null || oc project template-ocp
 
 # Deploy the application using Helm
 echo "📦 Deploying FK application stack..."
-if ! helm upgrade --install template-k8s ./helm-chart --wait; then
-  echo "⚠️  Deployment failed, likely due to admission webhook not ready"
-  echo "🔄 Retrying with webhook bypass..."
-  
-  # Temporarily disable admission webhook validation
-  kubectl delete validatingwebhookconfiguration ingress-nginx-admission 2>/dev/null || true
-  
-  # Deploy without webhook validation
-  helm upgrade --install template-k8s ./helm-chart --wait
-  
-  echo "✅ Deployment completed (webhook validation bypassed)"
-fi
+helm upgrade --install template-ocp ./helm-chart --wait
 
-# Get the ingress IP
-echo "🔍 Getting ingress information..."
-INGRESS_IP=$(minikube ip)
-echo "Ingress IP: $INGRESS_IP"
+# Get the route information
+echo "� Getting route information..."
+ROUTE_HOST=$(oc get route template-ocp-route -o jsonpath='{.spec.host}' 2>/dev/null || echo "Route not found")
 
 echo ""
 echo "✅ Deployment completed!"
 echo ""
 echo "🌍 Your applications are available at:"
 echo ""
-echo "   http://$INGRESS_IP/"
+if [ "$ROUTE_HOST" != "Route not found" ]; then
+    echo "   http://$ROUTE_HOST/"
+else
+    echo "   Check routes with: oc get routes"
+fi
+echo ""
+echo "📊 Open OpenShift web console:"
+echo "   crc console"
 echo ""

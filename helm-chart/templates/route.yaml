@@ -1,4 +1,3 @@
-{{- if .Values.route.enabled -}}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -6,14 +5,10 @@ metadata:
   labels:
     app.kubernetes.io/name: template-chart
     app.kubernetes.io/instance: {{ .Release.Name }}
-  {{- with .Values.route.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    haproxy.router.openshift.io/balance: roundrobin
 spec:
-  {{- if .Values.route.host }}
-  host: {{ .Values.route.host }}
-  {{- end }}
+  host: ""
   to:
     kind: Service
     name: {{ .Release.Name }}-{{ (index .Values.apache 0).name }}
@@ -32,14 +27,10 @@ metadata:
   labels:
     app.kubernetes.io/name: template-chart
     app.kubernetes.io/instance: {{ .Release.Name }}
-  {{- with .Values.route.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    haproxy.router.openshift.io/balance: roundrobin
 spec:
-  {{- if .Values.route.host }}
-  host: {{ .Values.route.host }}
-  {{- end }}
+  host: ""
   path: /api
   to:
     kind: Service
@@ -51,4 +42,3 @@ spec:
   tls:
     {{- toYaml .Values.route.tls | nindent 4 }}
   {{- end }}
-{{- end }}

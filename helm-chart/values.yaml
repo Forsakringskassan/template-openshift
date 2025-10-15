@@ -1,5 +1,3 @@
-replicaCount: 1
-
 quarkus:
   - name: quarkus
     image:
@@ -12,17 +10,12 @@ apache:
       repository: ghcr.io/forsakringskassan/designsystem-user-app
       tag: snapshot
 
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
-  hosts:
-    - paths:
-        - path: /api
-          pathType: Prefix
-          backend: quarkus
-        - path: /
-          pathType: Prefix
-          backend: apache
+route:
+  paths:
+    - path: /api
+      pathType: Prefix
+      backend: quarkus
+    - path: /
+      pathType: Prefix
+      backend: apache
 
