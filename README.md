@@ -43,6 +43,8 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 The `oc` CLI is included with CRC installation. You can also download it separately from [OpenShift CLI tools](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html).
 
+Check which verison you need with `crc version` it should printout the `OpenShift version`.
+
 ### View Application Status
 
 Check pod status
