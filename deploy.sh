@@ -62,10 +62,6 @@ if ! crc start; then
         echo "      crc setup"  
         echo "      crc start"
         echo ""
-        echo "   3. Alternative - use Podman Desktop or Docker Desktop with OpenShift extension"
-        echo ""
-        echo "   4. Use minikube instead (template-kubernetes project)"
-        echo ""
         exit 1
     fi
 fi
@@ -80,17 +76,13 @@ if ! oc login -u developer -p developer https://api.crc.testing:6443 --insecure-
     echo "🔍 Checking cluster status..."
     crc status
     echo ""
-    echo "🔧 This is likely due to the certificate renewal issue we saw earlier."
+    echo "🔧 This is likely due to the certificate renewal issue."
     echo ""
     echo "💡 RECOMMENDED SOLUTION:"
-    echo "   Update CodeReady Containers to the latest version (2.55.0):"
+    echo "   Update CodeReady Containers:"
     echo "   1. Download from: https://developers.redhat.com/products/codeready-containers/overview"
     echo "   2. Extract and replace your current CRC installation"
     echo "   3. Run: crc delete --force && crc setup && crc start"
-    echo ""
-    echo "🔄 Alternative - Use the template-kubernetes project instead:"
-    echo "   cd ../template-kubernetes && ./deploy.sh"
-    echo "   (Works with Minikube and doesn't have certificate issues)"
     echo ""
     exit 1
 fi

@@ -21,6 +21,8 @@ Download and install CRC from [Red Hat Developers](https://developers.redhat.com
 
 **Setup:**
 
+Unpack it like `tar xvf crc-*.tar.xz` and copy `crc` to som folder in `$PATH` like `cp crc ~/bin`.
+
 ```bash
 crc config set pull-secret-file /path/to/pull-secret.txt
 crc config set cpus 4
@@ -41,9 +43,9 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
 ### 3. OpenShift CLI (oc)
 
-The `oc` CLI is included with CRC installation. You can also download it separately from [OpenShift CLI tools](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html).
+You can download it separately from [OpenShift CLI tools](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html).
 
-Check which verison you need with `crc version` it should printout the `OpenShift version`. Unpack it like `tar xvf oc-*-linux.tar.gz` and copy `oc` to som folder in `$PATH` like `cp oc ~/bin`.
+Check which version you need with `crc version` it should printout the `OpenShift version`. Unpack it like `tar xvf oc-*-linux.tar.gz` and copy `oc` to som folder in `$PATH` like `cp oc ~/bin`.
 
 ### View Application Status
 
